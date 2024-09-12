@@ -2,8 +2,8 @@ import React, { ChangeEvent, useEffect, useState } from 'react';
 import './style.css';
 import InputBox from 'src/components/InputBox';
 import axios from 'axios';
-import { idCheckRequest } from 'src/apis';
-import { IdCheckRequestDto } from 'src/apis/dto/request/auth';
+import { idCheckRequest, telAuthRequest } from 'src/apis';
+import { IdCheckRequestDto, TelAuthRequestDto } from 'src/apis/dto/request/auth';
 import { ResponseDto } from 'src/apis/dto/response';
 
 type AuthPath = '회원가입' | '로그인';
@@ -71,6 +71,7 @@ function SignUp({ onPathchange }: AuthComponentProps) {
     const isComplete = name && id && isCheckedId && password && passwordCheck && isMatchedPassword && isCheckedPassword
         && telNumber && isSend && authNumber && isCheckedAuthNumber;
 
+
     //function : 아이디 중복 확인 Response 처리 함수 //
     const idCheckResponse = (responseBody : ResponseDto | null )=> {
         const message = 
@@ -85,6 +86,23 @@ function SignUp({ onPathchange }: AuthComponentProps) {
             setIdMessageError(!isSuccessed);
             setCheckedId(isSuccessed);
     };
+
+    //function : 전화번호 인증 Response 처리 하수 //
+    const telAuthResponse = (responseBody : ResponseDto | null) => {
+        const message = 
+            !responseBody ? '서버에 문제가 있습니다.' :
+            responseBody.code === 'VF' ? '숫자 11자 입력해주세요.' : 
+            responseBody.code === 'DT' ? '중복된 전화번호 입니다.' :
+            responseBody.code === 'TF' ? '서버에 문제가 있습니다.' :
+            responseBody.code === 'DBE' ? '서버에 문제가 있습니다.' :
+            responseBody.code === 'SU' ? '인증 번호가 전송 되었습니다.' : ''
+
+            const isSuccessed = responseBody !== null && responseBody.code === 'SU';
+            setTelNumberMessage(message);
+            setTelNumberMessageError(!isSuccessed);
+            setSend(isSuccessed);
+        }
+
 
     // event handler : 이름 변경 이벤트 처리 //
     const onNameChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
@@ -159,9 +177,12 @@ function SignUp({ onPathchange }: AuthComponentProps) {
             return;
         }
 
-        setTelNumberMessage('인증번호가 전송되었습니다.');
-        setTelNumberMessageError(false);
-        setSend(true);
+        const requestBody : TelAuthRequestDto = { telNumber };
+        telAuthRequest(requestBody).then(telAuthResponse)
+        
+        // setTelNumberMessage('인증번호가 전송되었습니다.');
+        // setTelNumberMessageError(false);
+        // setSend(true);
     };
 
     //event handler : 인증확인 버튼 클릭 이벤트 처리//
@@ -297,4 +318,8 @@ export default function Auth() {
             </div>
         </div>
     )
+}
+
+function setPasswordCheckMessage(message: string) {
+    throw new Error('Function not implemented.');
 }

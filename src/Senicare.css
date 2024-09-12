@@ -24,6 +24,13 @@
     margin: 0;
     font-family: "Pretendard-Regular";
 }
+
+
+#main-wrapper{
+    padding: 24px;
+    background-color: rgba(238,238,238,0.5);
+
+}
 /* ------------------------------ */
 .input-box{
     display: flex;

@@ -82,11 +82,11 @@ function SideNavigation() {
                     <div className='icon-text'>고객 관리</div>
                 </div>
                 <div className={`navigation-item ${isMm ? 'active' : ''}`} onClick={() => onItemClickHandler(MM_ABSOLUTE_PATH)}>
-                    <div className={`icon ${isMm ? 'mm-active-icon' : 'cs-icon'}`}></div>
+                    <div className={`icon ${isMm ? 'mm-active-icon' : 'mm-icon'}`}></div>
                     <div className='icon-text'>용품 관리</div>
                 </div>
                 <div className={`navigation-item ${isHr ? 'active' : ''}`} onClick={() => onItemClickHandler(HR_ABSOLUTE_PATH)} >
-                    <div className={`icon ${isHr ? 'hr-active-icon' : 'cs-icon'}`}></div>
+                    <div className={`icon ${isHr ? 'hr-active-icon' : 'hr-icon'}`}></div>
                     <div className='icon-text'>인사 관리</div>
                 </div>
             </div>

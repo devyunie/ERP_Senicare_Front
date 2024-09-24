@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState, KeyboardEvent } from 'react';
 import './style.css';
 import InputBox from 'src/components/InputBox';
 import axios from 'axios';
@@ -353,16 +353,28 @@ function SignIn({ onPathchange }: AuthComponentProps) {
         setPassword(value);
         setMessage('');
     }
+
+    //event handler : 로그인 비밀번호 enter submit 전송 처리 //
+    const onSignInKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
+        if(event.key === "Enter"){
+            onSignInButtonHandler();
+        }
+    }
+
+
+
     //event handler : 로그인 버튼 클릭 이벤트 처리 //
     const onSignInButtonHandler = () => {
-        if (!id || !password) return;
+        if (!id || !password){
+            return;
+        }
         const requestBody: SignInRequestDto = {
             userId: id,
             password
         };
         signInRequest(requestBody).then(signInResponse);
 
-        alert('로그인 성공');
+        // alert('로그인 성공');
     }
 
     //effect 아이디 비밀번호 변경시 실행할 함수 //
@@ -379,10 +391,10 @@ function SignIn({ onPathchange }: AuthComponentProps) {
             </div>
             <div className="input-container">
                 <InputBox value={id} onChange={onIdChangeHandler} message='' messageError type='text' label='아이디' placeholder='아이디를 입력해주세요.' />
-                <InputBox value={password} onChange={onPasswordChangeHandler} message={message} messageError type='password' label='비밀번호' placeholder='비밀번호를 입력해주세요.' />
+                <InputBox value={password} onChange={onPasswordChangeHandler} onKeyDown={onSignInKeyDownHandler} message={message} messageError type='password' label='비밀번호' placeholder='비밀번호를 입력해주세요.'/>
             </div>
             <div className="button-container">
-                <div id="sign-in-button" className="button primary full-width" onClick={onSignInButtonHandler}>로그인</div>
+                <div id="sign-in-button" className="button primary full-width" onClick={onSignInButtonHandler} >로그인</div>
                 <div className="link" onClick={() => onPathchange('회원가입')}>회원가입</div>
             </div>
             <div className="divider" style={{ width: '64px' }}></div>

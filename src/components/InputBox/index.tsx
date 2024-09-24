@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react'
+import React, { ChangeEvent, useState ,KeyboardEvent} from 'react'
 import './style.css'
 
 interface Props {
@@ -11,6 +11,7 @@ interface Props {
     buttonName?: string;
 
     onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+    onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
     onButtonClick?: () => void;
 }
 
@@ -23,6 +24,7 @@ export default function InputBox({
     message,
     messageError,
     onChange,
+    onKeyDown,
     onButtonClick
 }: Props) {
 
@@ -30,7 +32,7 @@ export default function InputBox({
         <div className="input-box">
             <div className="label">{label}</div>
             <div className="input-area">
-                <input value={value} type={type} placeholder={placeholder} onChange={onChange} />
+                <input value={value} type={type} placeholder={placeholder} onChange={onChange} onKeyDown={onKeyDown}/>
                 {buttonName && <div className={`input-button ${value ? 'active' : 'disable'}`} onClick={onButtonClick}>{buttonName}</div>}
             </div>
             <div className={`message ${messageError ? 'error' : 'primary'}`}>{message}</div>

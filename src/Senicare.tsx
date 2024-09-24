@@ -13,6 +13,10 @@ import MM from './views/MM';
 import HR from './views/HR';
 import HRDetail from './views/HR/Detail';
 import { useSearchParams } from 'react-router-dom';
+import { getSignInRequest } from './apis';
+import { GetSignInResponseDto } from './apis/dto/response/nurse';
+import { ResponseDto } from './apis/dto/response';
+import { useSignInUserStore } from './stores';
 
 // component: root path 컴포넌트//
 function Index() {
@@ -35,7 +39,7 @@ function Index() {
   );
 }
 // component : SNS SUCCESS 컴포넌트 //
-function SnsSuccess(){
+function SnsSuccess() {
 
   //state : Query Parameter 상태 //
   const [queryParam] = useSearchParams();
@@ -48,15 +52,15 @@ function SnsSuccess(){
   //function : 네비게이터 함수 //
   const navigator = useNavigate();
   //effect : Sns Success 컴포넌트 로드시 accessToken과 expiration을 확인하여 로그인 처리 하는 함수 //
-  useEffect(()=> {
-    if(accessToken && expiration) {
+  useEffect(() => {
+    if (accessToken && expiration) {
       const expires = new Date(Date.now() + (Number(expiration) * 1000));
-      setCookie(ACCESS_TOKEN, accessToken, { path: ROOT_PATH, expires});
+      setCookie(ACCESS_TOKEN, accessToken, { path: ROOT_PATH, expires });
       navigator(CS_ABSOLUTE_PATH);
     }
 
     else navigator(AUTH_ABSOLUTE_PATH)
-  },[])
+  }, [])
   //render sns success 컴포넌트 //
   return <></>;
 }
@@ -64,6 +68,47 @@ function SnsSuccess(){
 
 // component: Senicare 컴포넌트//
 export default function Senicare() {
+
+  // state : 로그인 유저 정보 상태 //
+  const {signInUser, setSignInUser} = useSignInUserStore();
+
+  //state : cookie 상태 //
+  const [cookies, setCookie, removeCookie] = useCookies();
+
+  //function : 네비게이터 함수 //
+  const navigator = useNavigate();
+
+  // function : get sign in response 처리 함수 //
+  const getSignInResponse = (responseBody: GetSignInResponseDto | ResponseDto | null) => {
+    const message = 
+      !responseBody ? '로그인 유저 정보를 불러오는데 문제가 발생했습니다.' : 
+      responseBody.code === 'NI' ? '로그인 유저 정보가 존재하지 않습니다.' :
+      responseBody.code === 'AF' ? '잘못된 로그인 정보입니다.' :
+      responseBody.code === 'DBE' ? '로그인 유저 정보를 불러오는데 문제가 발생했습니다.' : ''
+
+    const isSuccessed = responseBody !==null && responseBody.code === 'SU';
+    if(!isSuccessed){
+      alert(message);
+      removeCookie(ACCESS_TOKEN, {path: ROOT_PATH});
+      setSignInUser(null);
+      navigator(AUTH_ABSOLUTE_PATH);
+      return ;
+    }
+    const {userId, name, telNumber} = responseBody as GetSignInResponseDto;
+    setSignInUser({userId, name, telNumber});
+      };
+
+  // effect : cookie의 accessToken 값이 변경될 때마다 로그인 유저 정보 요청 함수 //
+  useEffect(() => {
+    const accessToken = cookies[ACCESS_TOKEN];
+    if (accessToken) {
+      getSignInRequest(accessToken).then(getSignInResponse);
+    }
+    else {
+      setSignInUser(null);
+    }
+  }, [cookies[ACCESS_TOKEN]]);
+
 
   // render: Senicare 컴포넌트 렌더링//
   return (
@@ -80,10 +125,10 @@ export default function Senicare() {
         <Route index element={<MM />} />
       </Route>
       <Route path={HR_PATH} element={<MainLayout />}>
-        <Route index element={<HR/>} />
-        <Route path={HR_DETAIL_PATH(':userId')} element={<HRDetail/>} />
+        <Route index element={<HR />} />
+        <Route path={HR_DETAIL_PATH(':userId')} element={<HRDetail />} />
       </Route>
-      <Route path={SNS_SUCCESS_PATH} element={<SnsSuccess/>} />
+      <Route path={SNS_SUCCESS_PATH} element={<SnsSuccess />} />
       <Route path={OTHERS_PATH} element={<Index />} />
     </Routes>
   );

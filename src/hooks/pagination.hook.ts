@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 
 // variable : 페이지 당 아이템 수 //
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 10;
 // variable : 섹션 당 페이지 수 //
-const PAGES_PER_SECTION = 5;
+const PAGES_PER_SECTION = 10;
 
 const usePaginaion = <T>() => {
 
@@ -28,14 +28,11 @@ const usePaginaion = <T>() => {
         const totalSection = Math.ceil(totalPage / PAGES_PER_SECTION);
         setTotalSection(totalSection);
 
-        if(!totalCount){
-            setCurrentPage(0);
-            setCurrentSection(0);
-        }
-        else{
+
             setCurrentPage(1);
             setCurrentSection(1);
-        }
+
+            initViewList(totalList);
 
     };
 
@@ -69,7 +66,7 @@ const usePaginaion = <T>() => {
     }
 
     //event handler : 페이지 클릭 이벤트 처리 함수 //
-    const onPageClickHandlern = (page: number) => {
+    const onPageClickHandler = (page: number) => {
         setCurrentPage(page);
     }
 
@@ -96,7 +93,7 @@ const usePaginaion = <T>() => {
     //effect : 현재 섹션이 변경될 시 실행할 함수 //
     useEffect(() => {
         initPageList(totalPage);
-    }, [currentSection])
+    }, [totalCount,currentSection])
 
     //effect : 현재 페이지가 변경될 시 실행할 함수 ..
     useEffect(() => {
@@ -112,8 +109,7 @@ const usePaginaion = <T>() => {
         pageList,
         setTotalList,
         initViewList,
-        initPageList,
-        onPageClickHandlern,
+        onPageClickHandler,
         onPreSectionClickHandler,
         onNextSectionClickHandler
 

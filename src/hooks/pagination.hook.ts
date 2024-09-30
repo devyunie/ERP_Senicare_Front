@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 
 // variable : 페이지 당 아이템 수 //
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 5;
 // variable : 섹션 당 페이지 수 //
-const PAGES_PER_SECTION = 10;
+const PAGES_PER_SECTION = 5;
 
-const usePaginaion = <T>() => {
+const usePagination  = <T>() => {
 
     // state : 페이징 관련 상태 //
     const [totalList, setTotalList] = useState<T[]>([]);
@@ -112,8 +112,7 @@ const usePaginaion = <T>() => {
         onPageClickHandler,
         onPreSectionClickHandler,
         onNextSectionClickHandler
-
     }
 };
 
-export default usePaginaion;
+export default usePagination ;

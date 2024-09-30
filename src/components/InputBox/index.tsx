@@ -1,9 +1,9 @@
-import React, { ChangeEvent, useState ,KeyboardEvent} from 'react'
-import './style.css'
+import React, { ChangeEvent , KeyboardEvent} from 'react';
+import './style.css';
 
 interface Props {
     label: string;
-    type: 'text' | 'password'; //-> 리터럴 타입
+    type: 'text' | 'password';
     placeholder: string;
     value: string;
     message: string;
@@ -15,17 +15,17 @@ interface Props {
     onButtonClick?: () => void;
 }
 
-export default function InputBox({
-    label,
-    type,
-    placeholder,
-    value,
+export default function InputBox({ 
+    label, 
+    type, 
+    placeholder, 
+    value, 
     buttonName,
     message,
     messageError,
     onChange,
     onKeyDown,
-    onButtonClick
+    onButtonClick,
 }: Props) {
 
     return (
@@ -38,4 +38,5 @@ export default function InputBox({
             <div className={`message ${messageError ? 'error' : 'primary'}`}>{message}</div>
         </div>
     )
+
 }

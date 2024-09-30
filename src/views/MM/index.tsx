@@ -7,7 +7,7 @@ import { deleteToolRequest, getToolListRequest, getToolRequest, patchToolRequest
 import { ResponseDto } from 'src/apis/dto/response';
 import { Tool } from 'src/types';
 import { GetToolListResponseDto, GetToolResponseDto } from 'src/apis/dto/response/tool';
-import { usePaginaion } from 'src/hooks';
+import { usePagination } from 'src/hooks';
 import Pagination from 'src/components/Pagination';
 
 // interface: 용품 등록 컴포넌트 Properties //
@@ -315,7 +315,7 @@ export default function MM() {
 
     const {totalList,currentPage, totalPage, totalCount, viewList,pageList,
             setTotalList,initViewList,
-            onPreSectionClickHandler,onNextSectionClickHandler,onPageClickHandler} = usePaginaion<Tool>();
+            onPreSectionClickHandler,onNextSectionClickHandler,onPageClickHandler} = usePagination<Tool>();
     
     //function: tool list 불러오기 함수 //
     const getToolList = () => {

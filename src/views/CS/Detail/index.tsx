@@ -11,8 +11,8 @@ import { usePagination } from 'src/hooks';
 import { CareRecord, Tool } from 'src/types';
 import { GetToolListResponseDto } from 'src/apis/dto/response/tool';
 import { PostCareRecordRequestDto } from 'src/apis/dto/request/customer';
-import { resolve } from 'path';
 import Pagination from 'src/components/Pagination';
+
 
 // component: 고객 정보 상세 보기 컴포넌트 //
 export default function CSDetail() {
@@ -54,6 +54,9 @@ export default function CSDetail() {
 
     //state: 사용 가능한 용품 리스트 상태 //
     const [toolList, setToolList] = useState<Tool[]>([]);
+
+    //* state: 용품 카운터 개수 상태 //
+    const [toolCount, setToolCount] = useState<number | null>();
 
     // variable: 담당자 여부 //
     const isCharger = charger === signInUser?.userId;
@@ -111,6 +114,7 @@ export default function CSDetail() {
         setRecordContents('');
         setUsedToolCount('');
         setSelectedTool(null);
+        setToolCount(null);
 
         const { careRecords } = responseBody as GetCareRecordResponseDto;
         setTotalList(careRecords);
@@ -154,6 +158,7 @@ export default function CSDetail() {
 
         
         getCareRecordListRequest(customerNumber, accessToken).then(getCareRecordListResponse);
+        getToolListRequest(accessToken).then(getToolResponse);
     }
 
     // function: delete customer response 처리 함수 //
@@ -178,6 +183,8 @@ export default function CSDetail() {
     const onToolSelectHandler = (tool : Tool | null) => {
         setSelectedTool(tool);
         if(!tool) setUsedToolCount('');
+        setToolCount(tool?.count);
+        console.log(tool?.count);
         setShowSelector(false);
     }
     //event handler: 관리 기록 버튼 클릭 이벤트 처리 //
@@ -349,11 +356,18 @@ export default function CSDetail() {
                             </div>
                             }
                         </div>
+                        {selectedTool &&
                         <div className='input-box'>
                             <div className='label'>개수</div>
                             <input className='input' placeholder='개수를 입력하세요.' value={usedToolCount} onChange={onUsedToolCountChangeHandler}/>
                         </div>
-                        <div></div>
+                        }
+                        {selectedTool &&
+                        <div className='input-box'>
+                            <div className='label'>재고</div>
+                            <div className='stock-count'>{toolCount}</div>
+                        </div>
+                        }
                     </div>
                 </div>
             </div>

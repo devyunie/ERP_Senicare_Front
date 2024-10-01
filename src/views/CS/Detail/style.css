@@ -215,8 +215,18 @@
     cursor: pointer;
     user-select: none;
 }
+#cs-detail-wrapper .stock-count{
+    background-color: rgba(255, 255, 255, 1);
+    border-radius: 6px;
+    border: 1px solid rgba(238, 238, 238, 1);
+    padding: 8px 16px;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 175%;
+    text-align: center;
+}
 
-#cs-detail-wrapper .selector .arrow-down-button {
+#cs-detail-wrapper .arrow-down-button {
     width: 24px;
     height: 24px;
 

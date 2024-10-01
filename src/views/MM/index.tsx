@@ -372,7 +372,7 @@ export default function MM() {
     const onSearchButtonClickHandler = () => {
 
         if(searchWord === ''){
-            setTotalList(totalList);
+            setTotalList(originalList);
             initViewList(viewList);
         }
 

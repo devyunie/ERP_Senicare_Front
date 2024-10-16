@@ -2,14 +2,15 @@ import axios, { AxiosResponse } from "axios";
 import { IdCheckRequestDto, SignInRequestDto, SignUpRequestDto, TelAuthCheckRequestDto, TelAuthRequestDto } from "./dto/request/auth";
 import { ResponseDto } from "./dto/response";
 import { SignInResponseDto } from "./dto/response/auth";
-import { GetNurseListResponseDto, GetSignInResponseDto } from "./dto/response/nurse";
+import { GetChargedCustomerResponseDto, GetNurseListResponseDto, GetNurseResponseDto, GetSignInResponseDto } from "./dto/response/nurse";
 import { PatchToolRequestDto, PostToolRequestDto } from "./dto/request/tool";
 import { GetToolListResponseDto, GetToolResponseDto } from "./dto/response/tool";
 import { GetCareRecordResponseDto, GetCustomerListResponseDto, GetCustomerResponseDto } from "./dto/response/customer";
 import { PatchCustomerRequestDto, PostCareRecordRequestDto, PostCustomerRequestDto } from "./dto/request/customer";
+import { PatchNurseRequestDto } from "./dto/request/nurse";
 
 // variable: API URL 상수 //
-const SENICARE_API_DOMAIN = 'http://localhost:4000';
+const SENICARE_API_DOMAIN = process.env.REACT_APP_API_URL;
 
 const AUTH_MODULE_URL = `${SENICARE_API_DOMAIN}/api/v1/auth`;
 
@@ -22,7 +23,10 @@ const SIGN_IN_API_URL = `${AUTH_MODULE_URL}/sign-in`;
 const NURSE_MODUEL_URL = `${SENICARE_API_DOMAIN}/api/v1/nurse`;
 
 const GET_NURSE_LIST_API_URL = `${NURSE_MODUEL_URL}`;
+const GET_NURSE_API_URL = (userId: string) => `${NURSE_MODUEL_URL}/${userId}`;
 const GET_SIGN_IN_API_URL = `${NURSE_MODUEL_URL}/sign-in`;
+const PATCH_NURSE_API_URL = `${NURSE_MODUEL_URL}`;
+const GET_CHARGED_CUSTOMER_API_URL = (nurseId: string) => `${NURSE_MODUEL_URL}/${nurseId}/customers`;
 
 const TOOL_MODULE_URL = `${SENICARE_API_DOMAIN}/api/v1/tool`;
 
@@ -39,10 +43,8 @@ const GET_CUSTOMER_LIST_API_URL = `${CUSTOMER_MODULE_URL}`;
 const GET_CUSTOMER_API_URL = (customerNumber: number | string) => `${CUSTOMER_MODULE_URL}/${customerNumber}`;
 const PATCH_CUSTOMER_API_URL = (customerNumber: number | string) => `${CUSTOMER_MODULE_URL}/${customerNumber}`;
 const DELETE_CUSTOMER_API_URL = (customerNumber: number | string) => `${CUSTOMER_MODULE_URL}/${customerNumber}`;
-const POST_CARE_RECORD_API_URL = (customerNumber : number | string) => `${CUSTOMER_MODULE_URL}/${customerNumber}/care-record`;
+const POST_CARE_RECORD_API_URL = (customerNumber: number | string) => `${CUSTOMER_MODULE_URL}/${customerNumber}/care-record`;
 const GET_CARE_RECORD_LIST_API_URL = (customerNumber: number | string) => `${CUSTOMER_MODULE_URL}/${customerNumber}/care-records`;
-
-
 
 // function: Authorizarion Bearer 헤더 //
 const bearerAuthorization = (accessToken: string) => ({ headers: { 'Authorization': `Bearer ${accessToken}` } })
@@ -108,10 +110,34 @@ export const getNurseListRequest = async (accessToken: string) => {
     return responseBody;
 };
 
+// function: get nurse 요청 함수 //
+export const getNurseRequest = async (userId: string, accessToken: string) => {
+    const responseBody = await axios.get(GET_NURSE_API_URL(userId), bearerAuthorization(accessToken))
+        .then(responseDataHandler<GetNurseResponseDto>)
+        .catch(responseErrorHandler);
+    return responseBody;
+};
+
 // function: get sign in 요청 함수 //
 export const getSignInRequest = async (accessToken: string) => {
     const responseBody = await axios.get(GET_SIGN_IN_API_URL, bearerAuthorization(accessToken))
         .then(responseDataHandler<GetSignInResponseDto>)
+        .catch(responseErrorHandler);
+    return responseBody;
+};
+
+// function: patch nurse 요청 함수 //
+export const patchNurseRequest = async (requestBody: PatchNurseRequestDto, accessToken: string) => {
+    const responseBody = await axios.patch(PATCH_NURSE_API_URL, requestBody, bearerAuthorization(accessToken))
+        .then(responseDataHandler<ResponseDto>)
+        .catch(responseErrorHandler);
+    return responseBody;
+};
+
+// function: get charged customer 요청 함수 //
+export const getChargedCustomerRequest = async (nurseId: string, accessToken: string) => {
+    const responseBody = await axios.get(GET_CHARGED_CUSTOMER_API_URL(nurseId), bearerAuthorization(accessToken))
+        .then(responseDataHandler<GetChargedCustomerResponseDto>)
         .catch(responseErrorHandler);
     return responseBody;
 };
@@ -196,6 +222,14 @@ export const deleteCustomerRequest = async (customerNumber: number | string, acc
     return responseBody;
 };
 
+// function: post care record 요청 함수 //
+export const postCareRecordRequest = async (requestBody: PostCareRecordRequestDto, customerNumber: number | string, accessToken: string) => {
+    const responseBody = await axios.post(POST_CARE_RECORD_API_URL(customerNumber), requestBody, bearerAuthorization(accessToken))
+        .then(responseDataHandler<ResponseDto>)
+        .catch(responseErrorHandler);
+    return responseBody;
+};
+
 // function: get care record list 요청 함수 //
 export const getCareRecordListRequest = async (customerNumber: number | string, accessToken: string) => {
     const responseBody = await axios.get(GET_CARE_RECORD_LIST_API_URL(customerNumber), bearerAuthorization(accessToken))
@@ -203,14 +237,6 @@ export const getCareRecordListRequest = async (customerNumber: number | string, 
         .catch(responseErrorHandler);
     return responseBody;
 };
-
-//function: post care record 요청 함수 //
-export const postCareRecordRequest = async (requestBody: PostCareRecordRequestDto, customerNumber: number | string , accessToken: string) => {
-    const responseBody = await axios.post(POST_CARE_RECORD_API_URL(customerNumber), requestBody, bearerAuthorization(accessToken))
-        .then(responseDataHandler<GetCareRecordResponseDto>)
-        .catch(responseErrorHandler);
-    return responseBody;
-}
 
 const FILE_UPLOAD_URL = `${SENICARE_API_DOMAIN}/file/upload`;
 
